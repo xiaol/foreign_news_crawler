@@ -10,14 +10,15 @@ import time
 
 r = redis.StrictRedis(host='localhost', port=6379)
 
-source = u"东亚日报"
+source = u"大公网"
 
-def donga_crawler(url):
+#首页->要闻
+def news_takungpao_crawler(url="http://news.takungpao.com/index.html"):
     text = get_page(url)
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    story_links = tree.xpath('.//a')
+    story_links = tree.xpath('.//div[@class="txtImgListeach current"]//h3/a')
 
     for story_link in story_links:
         try:
@@ -35,7 +36,32 @@ def donga_crawler(url):
             r.sadd('duplicates', story_text_link)
             r.rpush('stories', story_info)
         except:
-            print traceback.format_exc(), url
+            print traceback.format_exc(),url
+            pass
+
+#首页->观点->栏目->大公社评
+#首页->观点->栏目->指点香江
+#首页->观点->栏目->井水集
+#首页->观点->栏目->北京观察
+def takungpao_crawler_others(url):
+    text = get_page(url)
+    parser = etree.HTMLParser()
+    tree = etree.parse(StringIO(text), parser)
+
+    story_links = tree.xpath('.//div[@class="groom_title"]//a')
+
+    for story_link in story_links:
+        try:
+            story_text_link = story_link.get("href")
+            if r.sismember('duplicates', story_text_link) == True:
+                continue
+            story_text = get_text(story_text_link)
+            story_title = story_link.text.strip()
+            if len(story_text) == 0:
+                continue
+            r.sadd('duplicates', story_text_link)
+            r.rpush('stories', story_info)
+        except:
             pass
             
 def get_text(url, story_title):
@@ -43,11 +69,11 @@ def get_text(url, story_title):
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    story_imgUrl = []    
+    story_imgUrl = []
 
     update_time = time.strftime('%Y-%m-%d %H:%M:%S')
 
-    story_text = tree.find('.//td[@class="dotum-16-2d2d2d"]').text.strip()
+    story_text = ''
 
     for x in tree.xpath('.//p'):
         try:
@@ -67,5 +93,8 @@ def get_text(url, story_title):
     return story_info
 
 if __name__ == "__main__":
-    # print get_text("http://chinese.donga.com/gb/srv/service.php3?bicode=040000&biid=2015080403018")
-    donga_crawler(url="http://chinese.donga.com/gb/national/")
+    news_takungpao_crawler(url="http://news.takungpao.com/index.html")
+    takungpao_crawler_others(url="http://news.takungpao.com/special/zhdxj/")
+    takungpao_crawler_others(url="http://news.takungpao.com/special/shp/")
+    takungpao_crawler_others(url="http://news.takungpao.com/special/jshj/")
+    takungpao_crawler_others(url="http://news.takungpao.com/special/bjgc/")

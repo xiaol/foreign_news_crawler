@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from page import get_page
-from Logger import INFO, DBG, ERR
+from crawler_framework.page import get_page
+from crawler_framework.Logger import INFO, DBG, ERR
 from lxml import etree
 from StringIO import StringIO
 import redis
+import traceback
+import time
 
 r = redis.StrictRedis(host='localhost', port=6379)
 
@@ -22,21 +24,24 @@ def bbc_crawler(url):
         if r.sismember('duplicates', story_text_link) == True:
             continue
         else:
-            r.sadd('duplicates', story_text_link)
-        try:
-            story_text = get_text(story_text_link)
-            if len(story_text) == 0:
-                continue
-            story_title = story_link.text.strip()
-            if u"阅读全文" in story_title:
-                continue
-        except:
-            pass
+            try:
+                story_title = story_link.text.strip()
+                story_info = get_text(story_text_link, story_title)
+                story_text = story_info['content']
+                if len(story_text) == 0:
+                    continue
+                r.sadd('duplicates', story_text_link)
+                r.rpush('stories', story_info)
+            except:
+                print traceback.format_exc(), url
+                pass
 
-def get_text(url):
+def get_text(url, story_title):
     text = get_page(url)
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
+
+    update_time = time.strftime('%Y-%m-%d %H:%M:%S')
 
     story_imgUrl = []
 
@@ -56,13 +61,14 @@ def get_text(url):
             pass
 
     story_info = {
-        'story': story_text,
+        'content': story_text,
         'source': source,
         'title': story_title,
-        'img': story_imgUrl
+        'img': story_imgUrl,
+        'url': url,
+        'update_time': update_time
         }
 
-    r.rpush('storys', story_info)
 
     return story_info
 

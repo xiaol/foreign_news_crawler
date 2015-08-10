@@ -4,24 +4,28 @@ from crawler_framework.page import get_page
 from crawler_framework.Logger import INFO, DBG, ERR
 from lxml import etree
 from StringIO import StringIO
+import re
+from HTMLParser import HTMLParser
+from sys import stderr
+from traceback import print_exc
 import traceback
 import redis
 import time
 
 r = redis.StrictRedis(host='localhost', port=6379)
 
-source = u"德国之声"
+source = u"FT中文网"
 
-def dw_crawler(url):
+def FTchinese_crawler(url):
     text = get_page(url)
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    story_links = tree.xpath('.//a')
+    story_links = tree.xpath('.//div[@class="columncontent"]//div[@class="thcover" or @class="thleft" or @class="thright"]/a')
 
     for story_link in story_links:
         try:
-            story_text_link = 'http://www.dw.com/' + story_link.get("href")
+            story_text_link = "http://www.ftchinese.com" + story_link.get("href")
         except:
             continue
         try:
@@ -35,9 +39,9 @@ def dw_crawler(url):
             r.sadd('duplicates', story_text_link)
             r.rpush('stories', story_info)
         except:
-            print traceback.format_exc(), url
+            print traceback.format_exc(),url
             pass
-            
+
 def get_text(url, story_title):
     text = get_page(url)
     parser = etree.HTMLParser()
@@ -45,20 +49,18 @@ def get_text(url, story_title):
 
     update_time = time.strftime('%Y-%m-%d %H:%M:%S')
 
-    story_imgUrl = []
-
-    for x in tree.xpath('.//div[@id="bodyContent"]//img'):
-        try:
-            imgurl = "http://www.dw.com" + x.get('src')
-            story_imgUrl.append(imgurl)
-        except:
-            pass
-
     story_text = ''
+    story_imgUrl = []
 
     for x in tree.xpath('.//p'):
         try:
             story_text = story_text + x.text.strip() + '\n'
+        except:
+            pass
+
+    for x in tree.xpath('.//img'):
+        try:
+            story_imgUrl.append(x.get('src'))
         except:
             pass
     story_info = {
@@ -73,8 +75,9 @@ def get_text(url, story_title):
 
     return story_info
 
+
 if __name__ == "__main__":
-    # print get_text("http://www.dw.com/zh/%E9%80%83%E7%A5%A8%E7%BD%9A%E6%AC%BE%E6%9B%B4%E7%8B%A0-%E9%80%83%E7%A5%A8%E8%80%85%E6%AD%AA%E6%8B%9B%E6%9B%B4%E5%A4%9A/a-18620459")
-    dw_crawler("http://www.dw.com/zh/%E5%9C%A8%E7%BA%BF%E6%8A%A5%E5%AF%BC/%E9%9D%9E%E5%B8%B8%E5%BE%B7%E5%9B%BD/s-101347")
-    dw_crawler("http://www.dw.com/zh/%E5%9C%A8%E7%BA%BF%E6%8A%A5%E5%AF%BC/%E6%97%B6%E6%94%BF%E9%A3%8E%E4%BA%91/s-1681")
-    dw_crawler("http://www.dw.com/zh/%E5%9C%A8%E7%BA%BF%E6%8A%A5%E5%AF%BC/%E8%AF%84%E8%AE%BA%E5%88%86%E6%9E%90/s-100993")
+    FTchinese_crawler(url = "http://www.ftchinese.com/channel/china.html")
+    FTchinese_crawler(url="http://www.ftchinese.com/channel/asia.html")
+    FTchinese_crawler(url="http://www.ftchinese.com/channel/chinaeconomy.html")
+    FTchinese_crawler(url="http://www.ftchinese.com/channel/opinion.html")

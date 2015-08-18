@@ -7,6 +7,7 @@ from StringIO import StringIO
 import traceback
 import redis
 import time
+from Cleaners.langconv import *
 
 r = redis.StrictRedis(host='localhost', port=6379)
 
@@ -28,6 +29,7 @@ def udn_crawler(url):
             if r.sismember('duplicates', story_text_link) == True:
                 continue
             story_title = story_link.text.strip()
+            story_title = Converter('zh-hans').convert(story_title)
             story_info = get_text(story_text_link, story_title)
             story_text = story_info['content']
             if len(story_text) == 0:
@@ -43,26 +45,51 @@ def get_text(url, story_title):
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    story_imgUrl = []
-
     update_time = time.strftime('%Y-%m-%d %H:%M:%S')
 
-    story_text = ''
+    story_text = []
+    count = 0
+    imgnum = 0
 
-    for x in tree.xpath('.//p'):
+    for x in tree.find('.//div[@id="story_body_content"]').iter():
         try:
-            story_text = story_text + x.text.strip() + '\n'
+            if x.tag == "p":
+                t = x.text.strip()
+                t = Converter('zh-hans').convert(t)
+                if len(t) != 0:
+                    dict = {}
+                    dict[str(count)] = {}
+                    dict[str(count)]["txt"] = t
+                    count += 1
+                    story_text.append(dict)
+            if x.tag == "br":
+                t = x.tail.strip()
+                if len(t) != 0:
+                    dict = {}
+                    dict[str(count)] = {}
+                    dict[str(count)]["txt"] = t
+                    count += 1
+                    story_text.append(dict)
+            if x.tag == "img":
+                dict = {}
+                dict[str(count)] = {}
+                dict[str(count)]["img"] = x.get("src")
+                count += 1
+                story_text.append(dict)
+                imgnum += 1
         except:
             pass
+            
     story_info = {
         'content': story_text,
         'source': source,
         'title': story_title,
-        'img': story_imgUrl,
         'url': url,
-        'update_time': update_time
+        'update_time': update_time,
+        'imgnum': imgnum,
+        'source_url': url,
+        'sourceSiteName': source
         }
-
 
     return story_info
 

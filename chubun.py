@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# 修改完毕
 
 from crawler_framework.page import get_page
 from crawler_framework.Logger import INFO, DBG, ERR
@@ -45,29 +46,49 @@ def get_text(url, story_title):
 
     update_time = time.strftime('%Y-%m-%d %H:%M:%S')
 
-    story_imgUrl = []
+    story_text = []
+    count = 0
+    imgnum = 0
 
-    for x in tree.xpath('.//div[@id="content"]//img'):
+    for x in tree.find('.//div[@id="content"]').iter():
         try:
-            imgurl = x.get('src')
-            story_imgUrl.append(imgurl)
+            if x.tag == "p":
+                t = x.find('.//font').text.strip()
+                if len(t) != 0:
+                    dict = {}
+                    dict[str(count)] = {}
+                    dict[str(count)]["txt"] = t
+                    count += 1
+                    story_text.append(dict)
+            if x.tag == "br":
+                t = x.tail.strip()
+                if len(t) != 0:
+                    dict = {}
+                    dict[str(count)] = {}
+                    dict[str(count)]["txt"] = t
+                    count += 1
+                    story_text.append(dict)
+            if x.tag == "img":
+                if "uploads" in x.get("src"):
+                    dict = {}
+                    dict[str(count)] = {}
+                    dict[str(count)]["img"] = x.get("src")
+                    count += 1
+                    story_text.append(dict)
+                    imgnum += 1
         except:
             pass
 
-    story_text = ''
-
-    for x in tree.xpath('.//br'):
-        try:
-            story_text = story_text + x.tail.strip() + '\n'
-        except:
-            pass
     story_info = {
         'content': story_text,
         'source': source,
         'title': story_title,
         'img': story_imgUrl,
         'url': url,
-        'update_time': update_time
+        'update_time': update_time,
+        'imgnum': imgnum,
+        'source_url': url,
+        'sourceSiteName': source
         }
 
 
@@ -75,6 +96,8 @@ def get_text(url, story_title):
 
 if __name__ == "__main__":
     # print get_text("http://www.chubun.com/modules/article/view.article.php/c130/160142")
+    # print get_text("http://www.chubun.com/modules/article/view.article.php/c7/160448",'')
+    # get_text("http://www.chubun.com/modules/article/view.article.php/c145/160586",'')
     chubun_crawler(url="http://www.chubun.com/modules/article/view.category.php/120")
     chubun_crawler(url="http://www.chubun.com/modules/article/view.category.php/5")
     chubun_crawler(url="http://www.chubun.com/modules/article/view.category.php/6")

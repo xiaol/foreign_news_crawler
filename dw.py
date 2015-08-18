@@ -21,13 +21,13 @@ def dw_crawler(url):
 
     for story_link in story_links:
         try:
-            story_text_link = 'http://www.dw.com/' + story_link.get("href")
+            story_text_link = 'http://www.dw.com' + story_link.get("href")
         except:
             continue
         try:
             if r.sismember('duplicates', story_text_link) == True:
                 continue
-            story_title = story_link.text.strip()
+            story_title = story_link.find('.//h2').text.strip()
             story_info = get_text(story_text_link, story_title)
             story_text = story_info['content']
             if len(story_text) == 0:
@@ -45,29 +45,47 @@ def get_text(url, story_title):
 
     update_time = time.strftime('%Y-%m-%d %H:%M:%S')
 
-    story_imgUrl = []
+    story_text = []
+    count = 0
+    imgnum = 0
 
-    for x in tree.xpath('.//div[@id="bodyContent"]//img'):
+    for x in tree.find('.//div[@id="bodyContent"]').iter():
         try:
-            imgurl = "http://www.dw.com" + x.get('src')
-            story_imgUrl.append(imgurl)
+            if x.tag == "p":
+                t = x.text.strip()
+                if len(t) != 0:
+                    dict = {}
+                    dict[str(count)] = {}
+                    dict[str(count)]["txt"] = t
+                    count += 1
+                    story_text.append(dict)
+            if x.tag == "br":
+                t = x.tail.strip()
+                if len(t) != 0:
+                    dict = {}
+                    dict[str(count)] = {}
+                    dict[str(count)]["txt"] = t
+                    count += 1
+                    story_text.append(dict)
+            if x.tag == "img":
+                dict = {}
+                dict[str(count)] = {}
+                dict[str(count)]["img"] = 'http://www.dw.com/zh' + x.get("src")
+                count += 1
+                story_text.append(dict)
+                imgnum += 1
         except:
             pass
-
-    story_text = ''
-
-    for x in tree.xpath('.//p'):
-        try:
-            story_text = story_text + x.text.strip() + '\n'
-        except:
-            pass
+            
     story_info = {
         'content': story_text,
         'source': source,
         'title': story_title,
-        'img': story_imgUrl,
         'url': url,
-        'update_time': update_time
+        'update_time': update_time,
+        'imgnum': imgnum,
+        'source_url': url,
+        'sourceSiteName': source
         }
 
 

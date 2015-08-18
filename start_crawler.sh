@@ -5,4 +5,6 @@ do
 	nohup python $i &
 done
 
-nohup python pipeline.py &
+wait
+
+nohup python pipeline/pipeline.py &

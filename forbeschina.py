@@ -17,7 +17,7 @@ def forbeschina_crawler(url):
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    story_links = tree.xpath('.//a')
+    story_links = tree.xpath('.//div[@id="main_content"]//a')
 
     for story_link in story_links:
         try:
@@ -43,24 +43,49 @@ def get_text(url, story_title):
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    story_imgUrl = []
-
     update_time = time.strftime('%Y-%m-%d %H:%M:%S')
 
-    story_text = ''
+    story_text = []
+    count = 0
+    imgnum = 0
 
-    for x in tree.xpath('.//p'):
+    for x in tree.find('.//div[@id="main_content"]').iter():
         try:
-            story_text = story_text + x.text.strip() + '\n'
+            if x.tag == "p":
+                t = x.text.strip()
+                if len(t) != 0:
+                    dict = {}
+                    dict[str(count)] = {}
+                    dict[str(count)]["txt"] = t
+                    count += 1
+                    story_text.append(dict)
+            if x.tag == "br":
+                t = x.tail.strip()
+                if len(t) != 0:
+                    dict = {}
+                    dict[str(count)] = {}
+                    dict[str(count)]["txt"] = t
+                    count += 1
+                    story_text.append(dict)
+            if x.tag == "img":
+                dict = {}
+                dict[str(count)] = {}
+                dict[str(count)]["img"] = 'http://www.forbeschina.com' + x.get("src")
+                count += 1
+                story_text.append(dict)
+                imgnum += 1
         except:
             pass
+            
     story_info = {
         'content': story_text,
         'source': source,
         'title': story_title,
-        'img': story_imgUrl,
         'url': url,
-        'update_time': update_time
+        'update_time': update_time,
+        'imgnum': imgnum,
+        'source_url': url,
+        'sourceSiteName': source
         }
 
 

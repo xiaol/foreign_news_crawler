@@ -17,7 +17,7 @@ def stheadline_crawler(url):
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    story_links = tree.xpath('.//div[@class="sections"]//a')
+    story_links = tree.xpath('.//div[@class="main main-dailynews-list main-inews-list"]//a')
 
     for story_link in story_links:
         try:
@@ -43,33 +43,50 @@ def get_text(url, story_title):
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    story_imgUrl = []
-
     update_time = time.strftime('%Y-%m-%d %H:%M:%S')
 
-    for x in tree.xpath('.//div[@class="content"]//img'):
+    story_text = []
+    count = 0
+    imgnum = 0
+
+    for x in tree.find('.//div[@class="content"]').iter():
         try:
-            imgurl = 'http:' + x.get('src')
-            story_imgUrl.append(imgurl)
+            if x.tag == "span":
+                t = x.text.strip()
+                if len(t) != 0:
+                    dict = {}
+                    dict[str(count)] = {}
+                    dict[str(count)]["txt"] = t
+                    count += 1
+                    story_text.append(dict)
+            if x.tag == "br":
+                t = x.tail.strip()
+                if len(t) != 0:
+                    dict = {}
+                    dict[str(count)] = {}
+                    dict[str(count)]["txt"] = t
+                    count += 1
+                    story_text.append(dict)
+            if x.tag == "img":
+                dict = {}
+                dict[str(count)] = {}
+                dict[str(count)]["img"] = "http:" + x.get("src")
+                count += 1
+                story_text.append(dict)
+                imgnum += 1
         except:
             pass
-
-    story_text = tree.find('.//span[@class="set-font-aera"]').text.strip()
-
-    for x in tree.xpath('.//span[@class="set-font-aera"]//br'):
-        try:
-            story_text = story_text + x.tail.strip() + '\n'
-        except:
-            pass
+            
     story_info = {
         'content': story_text,
         'source': source,
         'title': story_title,
-        'img': story_imgUrl,
         'url': url,
-        'update_time': update_time
+        'update_time': update_time,
+        'imgnum': imgnum,
+        'source_url': url,
+        'sourceSiteName': source
         }
-
 
     return story_info
 

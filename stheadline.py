@@ -7,6 +7,7 @@ from StringIO import StringIO
 import traceback
 import redis
 import time
+from Cleaners.langconv import *
 
 r = redis.StrictRedis(host='localhost', port=6379)
 
@@ -28,6 +29,7 @@ def stheadline_crawler(url):
             if r.sismember('duplicates', story_text_link) == True:
                 continue
             story_title = story_link.text.strip()
+            story_title = Converter('zh-hans').convert(story_title)
             story_info = get_text(story_text_link, story_title)
             story_text = story_info['content']
             if len(story_text) == 0:
@@ -53,6 +55,7 @@ def get_text(url, story_title):
         try:
             if x.tag == "span":
                 t = x.text.strip()
+                t = Converter('zh-hans').convert(t)
                 if len(t) != 0:
                     dict = {}
                     dict[str(count)] = {}

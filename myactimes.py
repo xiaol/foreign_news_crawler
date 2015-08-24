@@ -67,6 +67,14 @@ def get_text(url, story_title):
                     dict[str(count)]["txt"] = t
                     count += 1
                     story_text.append(dict)
+            if x.tag == "p":
+                t = x.text.strip()
+                if len(t) != 0:
+                    dict = {}
+                    dict[str(count)] = {}
+                    dict[str(count)]["txt"] = t
+                    count += 1
+                    story_text.append(dict)
             if x.tag == "img":
                 dict = {}
                 dict[str(count)] = {}

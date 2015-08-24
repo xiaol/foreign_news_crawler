@@ -64,6 +64,7 @@ def get_text(url, story_title):
                     story_text.append(dict)
             if x.tag == "br":
                 t = x.tail.strip()
+                t = Converter('zh-hans').convert(t)
                 if len(t) != 0:
                     dict = {}
                     dict[str(count)] = {}

@@ -20,7 +20,7 @@ def bcc_crawler(url):
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    story_links = tree.xpath('.//div[@class="ma3"]//a')
+    story_links = tree.xpath('.//div[@class="ma3"]//div[contains(@class, "tt")]//a')
 
     for story_link in story_links:
         try:
@@ -31,7 +31,6 @@ def bcc_crawler(url):
             if r.sismember('duplicates', story_text_link) == True:
                 continue
             story_title = story_link.text.strip()
-            print story_title
             story_title = Converter('zh-hans').convert(story_title)
             story_info = get_text(story_text_link, story_title)
             story_text = story_info['content']
@@ -98,9 +97,8 @@ def get_text(url, story_title):
         'source_url': url,
         'sourceSiteName': source
         }
-
     return story_info
 
 if __name__ == "__main__":
     bcc_crawler(url="http://www.bcc.com.tw/newsList.%E5%85%A9%E5%B2%B8")
-    # get_text("http://www.bcc.com.tw/newsView.2623802",'')
+    # get_text("http://www.bcc.com.tw/newsView.2638420",'')

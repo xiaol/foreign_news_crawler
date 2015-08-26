@@ -68,6 +68,8 @@ def get_text(url, story_title):
                     count += 1
                     story_text.append(dict)
             if x.tag == "img":
+                if "nocookie.gif" in x.get("src"):
+                    continue
                 dict = {}
                 dict[str(count)] = {}
                 dict[str(count)]["img"] = 'http://cn.nikkei.com/' + x.get("src")

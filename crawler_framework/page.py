@@ -32,7 +32,7 @@ def decode_safe(s):
     if type(s) == unicode:
         return s
     try:
-        return s.decode('gbk')
+        return s.decode('gbk','ignore')
     except:
         pass
     try:
@@ -45,6 +45,10 @@ def decode_safe(s):
         pass
     try:
         return s.decode('big5')
+    except:
+        pass
+    try:
+        return s.decode('gb2312')
     except:
         pass
 
@@ -84,7 +88,6 @@ def get_page(url, cookiejar = None, post_data = None, max_retry = 10, need_proxy
                 raise
 
             try:
-                t0 = time.time()
                 if rsp.info().get('Content-Encoding') == 'gzip':
                     buf = StringIO(rsp_text)
                     f = gzip.GzipFile(fileobj=buf)
@@ -108,4 +111,4 @@ def get_page(url, cookiejar = None, post_data = None, max_retry = 10, need_proxy
 if __name__ == '__main__':
     # openlog('page.log')
     # print get_page('http://www.ftchinese.com/')
-    pass
+    print get_page("http://www.xilu.com/news/jixiantiaozhanyanbo_2.html")

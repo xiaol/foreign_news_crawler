@@ -32,7 +32,7 @@ def decode_safe(s):
     if type(s) == unicode:
         return s
     try:
-        return s.decode('gbk','ignore')
+        return s.decode('gbk')
     except:
         pass
     try:

@@ -7,6 +7,7 @@ from StringIO import StringIO
 import traceback
 import redis
 import time
+import urllib
 
 r = redis.StrictRedis(host='localhost', port=6379)
 
@@ -21,7 +22,8 @@ def dw_crawler(url):
 
     for story_link in story_links:
         try:
-            story_text_link = 'http://www.dw.com' + story_link.get("href")
+            href = urllib.quote(story_link.get("href").encode(utf-8))
+            story_text_link = 'http://www.dw.com' + href
         except:
             continue
         try:
@@ -88,7 +90,7 @@ def get_text(url, story_title):
         'sourceSiteName': source
         }
 
-
+    print story_info
     return story_info
 
 if __name__ == "__main__":

@@ -31,6 +31,7 @@ def bcc_crawler(url):
             if r.sismember('duplicates', story_text_link) == True:
                 continue
             story_title = story_link.text.strip()
+            print story_title
             story_title = Converter('zh-hans').convert(story_title)
             story_info = get_text(story_text_link, story_title)
             story_text = story_info['content']
@@ -47,7 +48,7 @@ def get_text(url, story_title):
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    update_time = time.strftime('%Y-%m-%d %H:%M:%S')
+    create_time = time.strftime('%Y-%m-%d %H:%M:%S')
     story_text = []
 
     count = 0
@@ -92,14 +93,12 @@ def get_text(url, story_title):
         'source': source,
         'title': story_title,
         'url': url,
-        'update_time': update_time,
+        'create_time': create_time,
         'imgnum': imgnum,
         'source_url': url,
         'sourceSiteName': source
         }
 
-    print story_info
-        
     return story_info
 
 if __name__ == "__main__":

@@ -19,7 +19,7 @@ def weiwenpo_crawler(url):
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    update_time = time.strftime('%Y-%m-%d %H:%M:%S')
+    create_time = time.strftime('%Y-%m-%d %H:%M:%S')
 
     story_text = []
     count = 0
@@ -52,7 +52,7 @@ def get_text(url, story_title):
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    update_time = time.strftime('%Y-%m-%d %H:%M:%S')
+    create_time = time.strftime('%Y-%m-%d %H:%M:%S')
 
     for x in tree.find('.//td[@align="left"]').iter():
         try:
@@ -88,7 +88,7 @@ def get_text(url, story_title):
         'source': source,
         'title': story_title,
         'url': url,
-        'update_time': update_time,
+        'create_time': create_time,
         'imgnum': imgnum,
         'source_url': url,
         'sourceSiteName': source

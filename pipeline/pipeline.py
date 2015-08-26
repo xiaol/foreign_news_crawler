@@ -12,10 +12,10 @@ r = redis.Redis(host='localhost', port=6379)
 while r.llen('stories') != 0:
     story_info = r.lpop('stories')
     story_info = eval(story_info)
-    create_time = time.strftime('%Y-%m-%d %H:%M:%S')
+    update_time = time.strftime('%Y-%m-%d %H:%M:%S')
     channel_id = '16'
     channel = u'外媒观光团'
-    story_info['create_time'] = create_time
+    story_info['update_time'] = update_time
     story_info['channel_id'] = '16'
     story_info['channel'] = u'外媒观光团'
 

@@ -28,8 +28,6 @@ def reuters_crawler(url):
             if r.sismember('duplicates', story_text_link) == True:
                 continue
             story_title = story_link.text.strip()
-            if len(story_title) == 0:
-                continue
             story_info = get_text(story_text_link, story_title)
             story_text = story_info['content']
             if len(story_text) == 0:

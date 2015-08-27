@@ -7,7 +7,7 @@ from StringIO import StringIO
 import traceback
 import redis
 import time
-
+import re
 r = redis.StrictRedis(host='localhost', port=6379)
 
 source = u"美闻网"
@@ -39,7 +39,11 @@ def usnook_crawler(url):
             pass
 
 def get_text(url, story_title):
+    a1 = re.compile("<a.*><u>")
+    a2 = re.compile("</u></a>")
     text = get_page(url)
+    text = a1.sub('',text)
+    text = a2.sub('',text)
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 

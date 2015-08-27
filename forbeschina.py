@@ -49,7 +49,7 @@ def get_text(url, story_title):
     count = 0
     imgnum = 0
 
-    for x in tree.find('.//div[@id="main_content"]').iter():
+    for x in tree.find('.//div[@id="main_content"]//div[@class="p_detail"]').iter():
         try:
             if x.tag == "p":
                 t = x.text.strip()
@@ -68,6 +68,8 @@ def get_text(url, story_title):
                     count += 1
                     story_text.append(dict)
             if x.tag == "img":
+                if 'weixin' in x.get("src"):
+                    continue
                 dict = {}
                 dict[str(count)] = {}
                 dict[str(count)]["img"] = 'http://www.forbeschina.com' + x.get("src")

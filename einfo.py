@@ -19,7 +19,7 @@ def einfo_crawler(url):
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    story_links = tree.xpath('.//div[@id="maincontent-block"]//a')
+    story_links = tree.xpath('.//div[@class="view-content"]//a')
 
     for story_link in story_links:
         try:

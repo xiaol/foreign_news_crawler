@@ -6,7 +6,7 @@ import requests
 from hashlib import sha256
 import oss2
 
-
+logging.basicConfig(format="%(asctime)s %(name)s:%(levelname)s::%(message)s", level=logging.WARN)
 _logger = logging.getLogger(__name__)
 
 

@@ -5,8 +5,12 @@ import redis
 import time
 import oss_img
 
-conn = pymongo.MongoClient('h213', 27017)  # localhost
-db = conn['news_ver2']   # test
+mongo_host = 'h213'
+mongo_db = 'news_ver2'
+# mongo_host = 'localhost'
+# mongo_db = 'test'
+conn = pymongo.MongoClient(mongo_host, 27017)
+db = conn[mongo_db]
 
 r = redis.Redis(host='localhost', port=6379)
 

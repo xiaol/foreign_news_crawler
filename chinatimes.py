@@ -17,7 +17,7 @@ def chinatimes_crawler(url):
     parser = etree.HTMLParser()
     tree = etree.parse(StringIO(text), parser)
 
-    story_links = tree.xpath('.//a')
+    story_links = tree.xpath('.//h2/a')
 
     for story_link in story_links:
         try:
@@ -35,7 +35,8 @@ def chinatimes_crawler(url):
             r.sadd('duplicates', story_text_link)
             r.rpush('stories', story_info)
         except:
-            print traceback.format_exc(), url
+            print traceback.format_exc(), url, story_text_link
+            exit()
             pass
 
 def get_text(url, story_title):
@@ -44,7 +45,8 @@ def get_text(url, story_title):
     tree = etree.parse(StringIO(text), parser)
 
     create_time = time.strftime('%Y-%m-%d %H:%M:%S')
-
+    count = 0
+    imgnum = 0
     story_text = []
 
     for x in tree.find('.//article[@class="clear-fix"]').iter():
@@ -79,9 +81,11 @@ def get_text(url, story_title):
         'content': story_text,
         'source': source,
         'title': story_title,
-        'img': story_imgUrl,
         'url': url,
-        'create_time': create_time
+        'create_time': create_time,
+        'imgnum': imgnum,
+        'source_url': url,
+        'sourceSiteName': source,
         }
 
 

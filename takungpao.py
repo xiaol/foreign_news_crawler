@@ -57,6 +57,7 @@ def takungpao_crawler_others(url):
                 continue
             story_text = get_text(story_text_link)
             story_title = story_link.text.strip()
+            story_info = get_text(story_text_link, story_title)
             if len(story_text) == 0:
                 continue
             r.sadd('duplicates', story_text_link)

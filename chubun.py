@@ -83,7 +83,6 @@ def get_text(url, story_title):
         'content': story_text,
         'source': source,
         'title': story_title,
-        'img': story_imgUrl,
         'url': url,
         'create_time': create_time,
         'imgnum': imgnum,

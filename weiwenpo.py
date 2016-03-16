@@ -53,7 +53,9 @@ def get_text(url, story_title):
     tree = etree.parse(StringIO(text), parser)
 
     create_time = time.strftime('%Y-%m-%d %H:%M:%S')
-
+    count = 0
+    imgnum = 0
+    story_text = []
     for x in tree.find('.//td[@align="left"]').iter():
         try:
             if x.tag == "p":

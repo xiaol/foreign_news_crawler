@@ -1,4 +1,5 @@
 *.pyc
 .*
 !.gitignore
+nohup.out
 

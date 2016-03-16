@@ -8,7 +8,6 @@ import traceback
 import redis
 import time
 import urllib
-from crawler_framework.picOSS import save_to_oss
 
 r = redis.StrictRedis(host='localhost', port=6379)
 
@@ -73,7 +72,6 @@ def get_text(url, story_title):
                     story_text.append(dict)
             if x.tag == "img":
                 link = 'http://www.dw.com' + x.get("src")
-                link = save_to_oss(link)
                 dict = {}
                 dict[str(count)] = {}
                 dict[str(count)]["img"] = link

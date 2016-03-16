@@ -36,8 +36,13 @@ def download_image(url):
     if r.status_code != 200:
         _logger.error("download image error: %s" % url)
         return None, None
-    content_type = r.headers["Content-Type"]
-    suffix = image_type_mapping.get(content_type, None)
+    content_type = r.headers["Content-Type"].lower()
+    for key in image_type_mapping.keys():
+        if key in content_type:
+            suffix = image_type_mapping[key]
+            break
+    else:
+        suffix = None
     if suffix is None:
         _logger.error("error type: %s" % content_type)
         return None, None

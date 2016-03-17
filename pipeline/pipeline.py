@@ -22,6 +22,8 @@ def upload_image_in_content(content):
         for key, value in item.items():
             k, v = value.items()[0]
             if k == "img":
+                if v.startswith("//"):
+                    v = "http:" + v
                 info = oss_img.oss_image_upload(v)
                 if info is None:
                     delete_indexes.append(index)

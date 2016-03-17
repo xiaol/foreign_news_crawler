@@ -99,7 +99,8 @@ def get_text(url, story_title):
     return story_info
 
 if __name__ == "__main__":
-    weiwenpo_crawler(url="http://paper.wenweipo.com/001YO/")
-    weiwenpo_crawler(url="http://paper.wenweipo.com/other/index-005WW-0.html")
-    weiwenpo_crawler(url="http://paper.wenweipo.com/catList-s.php?cat=057PL&loc=any")
-    weiwenpo_crawler(url="http://news.wenweipo.com/list_news.php?cat=000IN&instantCat=hk")
+    pass    # 乱码
+    # weiwenpo_crawler(url="http://paper.wenweipo.com/001YO/")
+    # weiwenpo_crawler(url="http://paper.wenweipo.com/other/index-005WW-0.html")
+    # weiwenpo_crawler(url="http://paper.wenweipo.com/catList-s.php?cat=057PL&loc=any")
+    # weiwenpo_crawler(url="http://news.wenweipo.com/list_news.php?cat=000IN&instantCat=hk")

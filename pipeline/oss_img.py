@@ -22,8 +22,10 @@ image_url_prefix = "http://news-images.deeporiginalx.com"
 image_type_mapping = {
     "image/gif": ".gif",
     "image/jpeg": ".jpg",
+    "image/jpg": ".jpg",
     "image/x-png": ".png",
     "image/png": ".png",
+    "image/webp": ".webp",
 }
 
 

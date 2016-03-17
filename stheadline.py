@@ -22,7 +22,7 @@ def stheadline_crawler(url):
 
     for story_link in story_links:
         try:
-            story_text_link = "http://hd.stheadline.com/" + story_link.get("href")
+            story_text_link = "http://hd.stheadline.com" + story_link.get("href")
         except:
             continue
         try:
@@ -74,7 +74,11 @@ def get_text(url, story_title):
             if x.tag == "img":
                 dict = {}
                 dict[str(count)] = {}
-                dict[str(count)]["img"] = "http:" + x.get("src")
+                src = x.get("src")
+                if src.startswith("//"):
+                    dict[str(count)]["img"] = "http:" + src
+                else:
+                    dict[str(count)]["img"] = src
                 count += 1
                 story_text.append(dict)
                 imgnum += 1

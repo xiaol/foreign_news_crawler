@@ -50,8 +50,10 @@ while r.llen('stories') != 0:
     story_info['channel_id'] = '16'
     story_info['channel'] = u'外媒观光团'
     content = story_info['content']
+    print(story_info['url'])
     story_info['content'] = upload_image_in_content(content)
-    db['NewsItems'].insert(story_info)
+    if story_info['content']:
+        db['NewsItems'].insert(story_info)
 
     # break
 

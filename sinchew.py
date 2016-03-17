@@ -70,7 +70,11 @@ def get_text(url, story_title):
             if x.tag == "img":
                 dict = {}
                 dict[str(count)] = {}
-                dict[str(count)]["img"] = 'http://news.sinchew.com.my/' + x.get("src")
+                src = x.get("src")
+                if src.startswith("http"):
+                    dict[str(count)]["img"] = src
+                else:
+                    dict[str(count)]["img"] = 'http://news.sinchew.com.my' + src
                 count += 1
                 story_text.append(dict)
                 imgnum += 1

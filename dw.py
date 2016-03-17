@@ -71,7 +71,11 @@ def get_text(url, story_title):
                     count += 1
                     story_text.append(dict)
             if x.tag == "img":
-                link = 'http://www.dw.com' + x.get("src")
+                src = x.get("src")
+                if src.startswith("http"):
+                    link = src
+                else:
+                    link = 'http://www.dw.com' + src
                 dict = {}
                 dict[str(count)] = {}
                 dict[str(count)]["img"] = link

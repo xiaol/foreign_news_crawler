@@ -70,7 +70,10 @@ def get_text(url, story_title):
             if x.tag == "img":
                 dict = {}
                 dict[str(count)] = {}
-                dict[str(count)]["img"] = x.get("src")
+                src = x.get("src")
+                if "http://biz.line.naver.jp/line_business/" in src:
+                    continue
+                dict[str(count)]["img"] = src
                 count += 1
                 story_text.append(dict)
                 imgnum += 1

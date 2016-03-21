@@ -52,7 +52,7 @@ def get_text(url, story_title):
     count = 0
     imgnum = 0
 
-    for x in tree.find('.//div[@id="left_ver2"]').iter():
+    for x in tree.find('.//div[@id="Zoom"]').iter():
         try:
             if x.tag == "p":
                 t = x.text.strip()
